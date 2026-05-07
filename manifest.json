@@ -1,18 +1,20 @@
 {
-  "name": "Nome Completo do Meu App",
-  "short_name": "App",
-  "start_url": "/index.html",
+  "name": "Meu Aplicativo PWA",
+  "short_name": "MeuApp",
+  "description": "Uma descrição rápida do que seu app faz",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#2196f3",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "https://via.placeholder.com/192",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "https://via.placeholder.com/512",
       "sizes": "512x512",
       "type": "image/png"
     }
