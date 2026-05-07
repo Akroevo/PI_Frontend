@@ -1,5 +1,5 @@
 {
-  "name": "Meu Aplicativo PWA",
+  "name": "spheredu",
   "short_name": "MeuApp",
   "description": "Uma descrição rápida do que seu app faz",
   "start_url": "./index.html",
