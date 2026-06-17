@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const ID_COORD_LOGADO = parseInt(sessionStorage.getItem('coordenadorId'));
+    const ID_COORD_LOGADO = parseInt(localStorage.getItem('coordenadorId'));
 
     async function carregarDados() {
         const [subRes, cursosRes, alunosRes, notifRes] = await Promise.all([
