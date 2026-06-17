@@ -12,7 +12,7 @@ function authHeaders() {
 }
 
 function handleUnauthorized(res) {
-    if (res.status === 401 || res.status === 403) {
+    if (res.status === 401) {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = '/Login/login.html';
