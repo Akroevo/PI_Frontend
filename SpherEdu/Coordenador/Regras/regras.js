@@ -1,4 +1,4 @@
-const ID_COORD_LOGADO = parseInt(sessionStorage.getItem('coordenadorId'));
+const ID_COORD_LOGADO = parseInt(localStorage.getItem('coordenadorId'));
 
 let editIdRegra = null;
 const tableBody = document.getElementById('regras-table-body');
