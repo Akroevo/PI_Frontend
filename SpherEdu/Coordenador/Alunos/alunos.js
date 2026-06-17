@@ -47,80 +47,31 @@ function renderTable() {
     });
 }
 
-function openModal(matricula = null) {
+function openModal(matricula) {
     editMatricula = matricula;
     modal.style.display = 'flex';
     renderCursosCheckboxes();
 
-    const titulo = document.getElementById('modalTitulo');
+    const aluno = _alunos.find(a => String(a.matricula) === String(matricula));
+    document.getElementById('m-matricula').value = aluno.matricula;
+    document.getElementById('m-nome').value = aluno.nome;
 
-    if (matricula !== null) {
-        if (titulo) titulo.innerText = 'Editar Aluno';
-        const aluno = _alunos.find(a => String(a.matricula) === String(matricula));
-        document.getElementById('m-matricula').value = aluno.matricula;
-        document.getElementById('m-nome').value = aluno.nome;
-        const emailField = document.getElementById('m-email');
-        if (emailField) emailField.value = aluno.email || '';
-        const senhaField = document.getElementById('m-senha');
-        if (senhaField) {
-            senhaField.value = '******';
-            senhaField.disabled = true;
-        }
-        const idsCursos = (aluno.cursos || []).map(c => c.idCurso);
-        document.querySelectorAll('input[name="curso"]').forEach(cb => {
-            cb.checked = idsCursos.includes(parseInt(cb.value));
-        });
-    } else {
-        if (titulo) titulo.innerText = 'Novo Aluno';
-        form.reset();
-        const senhaField = document.getElementById('m-senha');
-        if (senhaField) senhaField.disabled = false;
-        const matriculaField = document.getElementById('m-matricula');
-        if (matriculaField) matriculaField.value = '';
-    }
+    const idsCursos = (aluno.cursos || []).map(c => c.idCurso);
+    document.querySelectorAll('input[name="curso"]').forEach(cb => {
+        cb.checked = idsCursos.includes(parseInt(cb.value));
+    });
 }
 
 form.onsubmit = async (e) => {
     e.preventDefault();
     const selectedCursosIds = Array.from(document.querySelectorAll('input[name="curso"]:checked')).map(cb => parseInt(cb.value));
-    const nome = document.getElementById('m-nome').value;
-    const emailField = document.getElementById('m-email');
-    const senhaField = document.getElementById('m-senha');
-    const email = emailField ? emailField.value : null;
-    const senha = senhaField ? senhaField.value : null;
 
     try {
-        if (editMatricula !== null) {
-            await fetch(API + '/alunos/' + editMatricula, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify({ nome, cursos: selectedCursosIds })
-            });
-        } else {
-            const usuarioRes = await fetch(API + '/usuarios', {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify({
-                    email,
-                    senha,
-                    telefone: null,
-                    tipo_usuario: 'aluno'
-                })
-            });
-            const usuarioData = await usuarioRes.json();
-
-            await fetch(API + '/alunos', {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify({
-                    nome,
-                    dataEntrada: new Date().toISOString().split('T')[0],
-                    cargaHorariaAcumulada: 0,
-                    usuario_idusuario: usuarioData.id,
-                    cursos: selectedCursosIds
-                })
-            });
-        }
+        await fetch(API + '/alunos/' + editMatricula, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify({ cursos: selectedCursosIds })
+        });
         modal.style.display = 'none';
         await carregarDados();
     } catch (err) {
