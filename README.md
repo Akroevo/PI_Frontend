@@ -1,4 +1,4 @@
-# 🎓 SpherEdu
+# 🎓 SpherEdu — Frontend
 
 Sistema desenvolvido como Projeto Integrador (PI) do SENAC, com foco na gestão de Atividades Complementares para instituições de ensino.
 
@@ -6,58 +6,40 @@ Sistema desenvolvido como Projeto Integrador (PI) do SENAC, com foco na gestão 
 
 ## 📌 Sobre o Projeto
 
-O SpherEdu é uma aplicação web com suporte a PWA (Progressive Web App) que permite o gerenciamento de atividades complementares de forma prática e organizada.
-
-O sistema possibilita que alunos registrem suas atividades, enquanto coordenadores e administradores podem validar, editar e acompanhar essas informações.
+Interface web do SpherEdu, construída em HTML, CSS e JavaScript puro, com suporte a PWA para instalação como aplicativo em dispositivos móveis e desktop.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-- JavaScript
-- Node.js
-- MySQL
-- SQL
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
 - PWA (Progressive Web App)
+- Service Worker
+- Deploy: Render
 
 ---
 
-## 🧩 Funcionalidades
+## 🧩 Páginas e Funcionalidades
 
-### 👨‍🎓 Aluno
-- Cadastro no sistema
-- Envio de atividades complementares
-- Acompanhamento do status das atividades
+### 🔑 Login
+- Autenticação com e-mail e senha
+- Redirecionamento automático por perfil (superadmin, coordenador, aluno)
+
+### 🛠️ Admin (SuperAdmin)
+- Dashboard geral
+- Gerenciamento de alunos (criar, editar, remover, atribuir cursos)
+- Gerenciamento de coordenadores
+- Gerenciamento de cursos
+- Gerenciamento de regras por curso
+- Avaliação de atividades
 
 ### 🧑‍🏫 Coordenador
-- Visualização das atividades dos alunos
-- Aprovação ou reprovação de atividades
-- Edição de registros
-
-### 🛠️ Administrador (SuperAdmin)
-- Gerenciamento completo do sistema
-- Cadastro e remoção de usuários
-- Controle total sobre atividades e permissões
-
----
-
-## 🔐 Segurança
-
-- Senhas armazenadas com hash utilizando bcrypt
-- Proteção contra SQL Injection com queries parametrizadas
-- Controle de acesso baseado em tipo de usuário
-
----
-
-## 🗄️ Banco de Dados
-
-O sistema utiliza MySQL, com estrutura relacional para:
-
-- Usuários
-- Atividades
-- Controle de permissões
-
-As senhas são armazenadas de forma segura utilizando hash (VARCHAR(255)).
+- Dashboard com visão dos seus alunos
+- Lista de alunos vinculados aos seus cursos
+- Avaliação de atividades submetidas
+- Gerenciamento de regras
 
 ---
 
@@ -65,38 +47,62 @@ As senhas são armazenadas de forma segura utilizando hash (VARCHAR(255)).
 
 O SpherEdu pode ser instalado como aplicativo:
 
-- Funciona no navegador e como app
-- Interface responsiva
-- Melhor experiência para dispositivos móveis
+- `manifest.json` configurado com ícones e tema
+- `sw.js` (Service Worker) com cache offline dos arquivos principais
+- Compatível com Android, iOS e desktop via navegador
+- Funciona via HTTPS (obrigatório para PWA)
+
+Arquivos PWA ficam em `SpherEdu/`:
+```
+SpherEdu/
+├── manifest.json
+├── sw.js
+├── icon-192.png
+├── icon-512.png
+└── index.html
+```
 
 ---
 
-## 🎯 Objetivo
+## 📁 Estrutura do Projeto
 
-Facilitar o gerenciamento de atividades complementares em instituições de ensino, tornando o processo mais:
+```
+SpherEdu/
+├── index.html               — entrada, redireciona para login
+├── manifest.json            — configuração do PWA
+├── sw.js                    — service worker
+├── spheredu.css             — estilos globais
+├── Api.js                   — configuração base da API
+├── Login/                   — tela de login
+├── Admin/
+│   ├── Dashboard/
+│   ├── Alunos/
+│   ├── Coordenadores/
+│   ├── Cursos/
+│   ├── Regras/
+│   └── Atividades/
+└── Coordenador/
+    ├── Dashboard/
+    ├── Alunos/
+    ├── Regras/
+    └── Atividades/
+```
 
-- Organizado
-- Seguro
-- Acessível
+---
+
+## 🔐 Autenticação
+
+O frontend armazena o token JWT retornado pelo backend e o envia no header `Authorization: Bearer <token>` em todas as requisições autenticadas.
 
 ---
 
 ## 📚 Contexto Acadêmico
 
-Projeto desenvolvido como parte do Projeto Integrador (PI) do SENAC, com foco na aplicação prática de conceitos como:
-
-- Desenvolvimento backend
-- Banco de dados
-- Segurança de aplicações
-- Arquitetura de sistemas
+Projeto desenvolvido como parte do Projeto Integrador (PI) do SENAC — Análise e Desenvolvimento de Sistemas.
 
 ---
 
-## 👨‍💻 Desenvolvedor
-
-Projeto desenvolvido por alunos do SENAC como parte da formação acadêmica em Análise e Desenvolvimento de Sistemas.
-
-Grupo composto por:
+## 👨‍💻 Equipe
 
 - Daniel Cabral
 - Ian Gabriel
@@ -109,13 +115,3 @@ Grupo composto por:
 ## 📌 Status
 
 🚧 Em desenvolvimento / aprimoramento contínuo
-
----
-
-## 💡 Observação
-
-Este projeto tem fins educacionais, mas segue boas práticas utilizadas no mercado, como:
-
-- Estruturação em camadas (Model, Controller)
-- Uso de hash para senhas
-- Separação de responsabilidades
