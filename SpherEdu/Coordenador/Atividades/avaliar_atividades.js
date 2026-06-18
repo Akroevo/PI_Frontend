@@ -4,7 +4,6 @@ let submissaoSelecionada = null;
 let _submissoes = [];
 let _atividades = [];
 let _alunos = [];
-let _usuarios = [];
 let _regras = [];
 let _certificados = [];
 
@@ -20,7 +19,6 @@ async function carregarDados() {
     _submissoes = await subRes.json();
     _atividades = await atRes.json();
     _alunos = await alunosRes.json();
-    _usuarios = await usuariosRes.json();
     _regras = await regrasRes.json();
     _certificados = await certRes.json();
     renderTable();
