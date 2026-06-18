@@ -28,12 +28,12 @@
             <header class="top-bar"></header>
             <section class="content-area">
                 <div class="header-geral">
-                    <h1>Alunos</h1>
+                    <h1>Alunos dos meus cursos</h1>
                 </div>
                 <table class="table-geral">
                     <thead>
                         <tr>
-                            <th>Matricula</th>
+                            <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Cursos</th>
                             <th></th>
@@ -41,14 +41,29 @@
                     </thead>
                     <tbody id="student-table-body"></tbody>
                 </table>
+
+                <div class="header-geral" style="margin-top: 40px;">
+                    <h1>Alunos sem curso</h1>
+                </div>
+                <table class="table-geral">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nome</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sem-curso-table-body"></tbody>
+                </table>
             </section>
         </main>
     </div>
+
     <div id="modal-aluno" class="modal-overlay">
         <div class="modal-content">
             <form id="form-aluno">
                 <div class="input-group">
-                    <label>Matricula</label>
+                    <label>Matrícula</label>
                     <input type="text" id="m-matricula" disabled>
                 </div>
                 <div class="input-group">
@@ -65,6 +80,7 @@
             </form>
         </div>
     </div>
+
     <script src="../../api.js"></script>
     <script src="alunos.js"></script>
 </body>
