@@ -1,13 +1,17 @@
-const CACHE_NAME = 'static-cache-v1';
-
+const CACHE_NAME = 'spheredu-cache-v1';
 
 const PRE_CACHE = [
   './',
   './index.html',
-  './style.css',
-  './app.js'
+  './spheredu.css',
+  './Api.js',
+  './Login/login.html',
+  './Login/login.css',
+  './Login/login.js',
+  './Login/logo.png',
+  './icon-192.png',
+  './icon-512.png'
 ];
-
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -16,7 +20,6 @@ self.addEventListener('install', event => {
       .then(self.skipWaiting())
   );
 });
-
 
 self.addEventListener('activate', event => {
   event.waitUntil(
@@ -27,7 +30,6 @@ self.addEventListener('activate', event => {
     })
   );
 });
-
 
 self.addEventListener('fetch', event => {
   event.respondWith(
