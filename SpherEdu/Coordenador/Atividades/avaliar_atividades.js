@@ -9,7 +9,7 @@ let _regras = [];
 let _certificados = [];
 
 async function carregarDados() {
-    const [subRes, atRes, alunosRes, usuariosRes, regrasRes, certRes] = await Promise.all([
+    const [subRes, atRes, alunosRes, regrasRes, certRes] = await Promise.all([
         fetch(API + '/submissoes/coordenador/' + ID_COORD_LOGADO, { headers: authHeaders() }),
         fetch(API + '/atividades', { headers: authHeaders() }),
         fetch(API + '/alunos', { headers: authHeaders() }),
