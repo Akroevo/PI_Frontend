@@ -9,35 +9,86 @@ const cursoSelect = document.getElementById('filtro-curso');
 let _meusCursos = [];
 let _regras = [];
 
+function mostrarMensagemTabela(msg) {
+    if (!tableBody) return;
+    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">${msg}</td></tr>`;
+}
+
 async function carregarCursos() {
-    const res = await fetch(API + '/coordenadores/' + ID_COORD_LOGADO + '/cursos', { headers: authHeaders() });
-    if (handleUnauthorized(res)) return;
-    _meusCursos = await res.json();
-    popularCursos();
-    await carregarRegras();
+    if (!cursoSelect) {
+        console.error('Elemento #filtro-curso não encontrado no HTML.');
+        mostrarMensagemTabela('Erro ao carregar página: elemento de seleção de curso não encontrado.');
+        return;
+    }
+
+    if (!ID_COORD_LOGADO || Number.isNaN(ID_COORD_LOGADO)) {
+        mostrarMensagemTabela('Não foi possível identificar o coordenador logado. Faça login novamente.');
+        return;
+    }
+
+    try {
+        const res = await fetch(API + '/coordenadores/' + ID_COORD_LOGADO + '/cursos', { headers: authHeaders() });
+        if (handleUnauthorized(res)) return;
+
+        if (!res.ok) {
+            mostrarMensagemTabela('Erro ao buscar seus cursos. Tente novamente mais tarde.');
+            return;
+        }
+
+        _meusCursos = await res.json();
+
+        if (!Array.isArray(_meusCursos) || !_meusCursos.length) {
+            mostrarMensagemTabela('Nenhum curso está associado a este coordenador. Contate o administrador.');
+            return;
+        }
+
+        popularCursos();
+        await carregarRegras();
+    } catch (err) {
+        console.error('Erro ao carregar cursos do coordenador:', err);
+        mostrarMensagemTabela('Erro de conexão ao buscar seus cursos.');
+    }
 }
 
 function popularCursos() {
     if (!cursoSelect) return;
     cursoSelect.innerHTML = '';
-    (Array.isArray(_meusCursos) ? _meusCursos : []).forEach(c => {
+    _meusCursos.forEach(c => {
         const option = document.createElement('option');
         option.value = c.idCurso;
         option.textContent = c.nome;
         cursoSelect.appendChild(option);
     });
+    cursoSelect.selectedIndex = 0;
 }
 
 function getCursoIdAtual() {
+    if (!cursoSelect || !cursoSelect.value) return null;
     return parseInt(cursoSelect.value);
 }
 
 async function carregarRegras() {
     const idCurso = getCursoIdAtual();
-    if (!idCurso) return;
-    const res = await fetch(API + '/regras/curso/' + idCurso, { headers: authHeaders() });
-    _regras = await res.json();
-    renderTable();
+    if (!idCurso) {
+        mostrarMensagemTabela('Selecione um curso para ver suas regras.');
+        return;
+    }
+
+    try {
+        const res = await fetch(API + '/regras/curso/' + idCurso, { headers: authHeaders() });
+        if (handleUnauthorized(res)) return;
+
+        if (!res.ok) {
+            mostrarMensagemTabela('Erro ao buscar regras deste curso.');
+            return;
+        }
+
+        _regras = await res.json();
+        renderTable();
+    } catch (err) {
+        console.error('Erro ao carregar regras:', err);
+        mostrarMensagemTabela('Erro de conexão ao buscar regras.');
+    }
 }
 
 function renderTable() {
@@ -46,7 +97,13 @@ function renderTable() {
     let somaTotal = 0;
     tableBody.innerHTML = '';
 
-    (Array.isArray(_regras) ? _regras : []).forEach(regra => {
+    const regrasArr = Array.isArray(_regras) ? _regras : [];
+
+    if (!regrasArr.length) {
+        mostrarMensagemTabela('Nenhuma regra cadastrada para este curso.');
+    }
+
+    regrasArr.forEach(regra => {
         somaTotal += regra.cargaHorariaPermitida;
         tableBody.innerHTML += `
             <tr>
@@ -109,7 +166,7 @@ form.onsubmit = async (e) => {
         .filter(r => r.idRegra !== editIdRegra)
         .reduce((acc, curr) => acc + curr.cargaHorariaPermitida, 0);
 
-    if (somaOutras + vPermitida > cursoObj.cargaHorariaTotal) {
+    if (cursoObj && somaOutras + vPermitida > cursoObj.cargaHorariaTotal) {
         alert(`Erro: A soma ultrapassa o limite do curso (${cursoObj.cargaHorariaTotal}h).`);
         return;
     }
@@ -117,26 +174,40 @@ form.onsubmit = async (e) => {
     const body = { curso_idCurso: idCurso, categoria: vCat, cargaHorariaMin: vMin, cargaHorariaMax: vMax, cargaHorariaPermitida: vPermitida, descricao: vDesc };
 
     try {
-        if (editIdRegra !== null) {
-            await fetch(API + '/regras/' + editIdRegra, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
-        } else {
-            await fetch(API + '/regras', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+        const res = editIdRegra !== null
+            ? await fetch(API + '/regras/' + editIdRegra, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) })
+            : await fetch(API + '/regras', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+
+        if (handleUnauthorized(res)) return;
+
+        if (!res.ok) {
+            const erro = await res.json().catch(() => ({}));
+            alert(erro.message || 'Erro ao salvar regra.');
+            return;
         }
+
         modal.style.display = 'none';
         await carregarRegras();
     } catch (err) {
         console.error('Erro ao salvar regra:', err);
+        alert('Erro de conexão ao salvar regra.');
     }
 };
 
 window.deleteRegra = async () => {
     if (editIdRegra !== null && confirm('Deseja excluir esta regra definitivamente?')) {
         try {
-            await fetch(API + '/regras/' + editIdRegra, { method: 'DELETE', headers: authHeaders() });
+            const res = await fetch(API + '/regras/' + editIdRegra, { method: 'DELETE', headers: authHeaders() });
+            if (handleUnauthorized(res)) return;
+            if (!res.ok) {
+                alert('Erro ao excluir regra.');
+                return;
+            }
             modal.style.display = 'none';
             await carregarRegras();
         } catch (err) {
             console.error('Erro ao excluir regra:', err);
+            alert('Erro de conexão ao excluir regra.');
         }
     }
 };
