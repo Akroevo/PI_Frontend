@@ -13,7 +13,6 @@ async function carregarDados() {
         fetch(API + '/submissoes/coordenador/' + ID_COORD_LOGADO, { headers: authHeaders() }),
         fetch(API + '/atividades', { headers: authHeaders() }),
         fetch(API + '/alunos', { headers: authHeaders() }),
-        fetch(API + '/usuarios', { headers: authHeaders() }),
         fetch(API + '/regras', { headers: authHeaders() }),
         fetch(API + '/certificados', { headers: authHeaders() })
     ]);
