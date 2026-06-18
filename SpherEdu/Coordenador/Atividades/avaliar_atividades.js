@@ -15,12 +15,15 @@ async function carregarDados() {
         fetch(API + '/regras', { headers: authHeaders() }),
         fetch(API + '/certificados', { headers: authHeaders() })
     ]);
+
     if (handleUnauthorized(subRes)) return;
+
     _submissoes = await subRes.json();
     _atividades = await atRes.json();
     _alunos = await alunosRes.json();
     _regras = await regrasRes.json();
     _certificados = await certRes.json();
+
     renderTable();
 }
 
